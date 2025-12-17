@@ -44,7 +44,7 @@ export interface InitOptions {
     config: InternalAxiosRequestConfig
   ) => InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>
   /** 外部注入：业务状态码校验 (如 code === 200) */
-  responseSuccessValidate?: (res: any) => boolean
+  responseSuccess?: (res: any) => boolean
 }
 
 // 统一返回结构 (根据后端实际情况调整)

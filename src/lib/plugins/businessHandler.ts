@@ -21,8 +21,8 @@ export function handleBusinessResponse(response: AxiosResponse, options: InitOpt
 
   // 3. 判断业务是否成功
   // 优先使用外部注入的验证函数，否则使用默认逻辑
-  const isSuccess = options.responseSuccessValidate
-    ? options.responseSuccessValidate(data)
+  const isSuccess = options.responseSuccess
+    ? options.responseSuccess(response)
     : data && (data.code === 200 || data.code === 0)
 
   // 4. 根据业务成功与否进行处理
@@ -30,16 +30,11 @@ export function handleBusinessResponse(response: AxiosResponse, options: InitOpt
     // 业务成功，直接返回核心数据
     return data
   } else {
-    // 业务失败，构造一个 Error 对象并拒绝
-    const errorMessage = data?.message || '系统错误'
-    const error = new Error(errorMessage) as any
-    error.response = response // 将原始响应挂载到 error 对象上，方便排查
-
     // 调用外部统一错误处理钩子
-    if (options.onError) {
-      options.onError(error)
+    if (options.responseFail) {
+      options.responseFail(response)
     }
 
-    return Promise.reject(error)
+    return Promise.reject(response)
   }
 }

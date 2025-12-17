@@ -16,8 +16,8 @@ function testLoading() {
   // 发起一个请求，并传入 _mockDelay 参数
   // 这个请求会先在请求拦截器中暂停 3000ms
   // 然后才会真正发出，即使后端 500 或 404 也能看到 Loading
-  request.get('/test-loading', undefined, {
-    _mockDelay: 3000
+  request.get('/login', undefined, {
+    _mockDelay: 1000
   }).then(res => {
     console.log('Delayed request finished!', res)
   }).catch(err => {

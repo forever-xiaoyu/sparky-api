@@ -27,7 +27,7 @@ initRequest({
   // onHideLoading: () => {},
 
   // 注入全局报错
-  onError: (err) => {
+  responseFail: (err) => {
     // 可以在这里处理 401 跳转
     if (err.response?.status === 401) {
       window.location.href = '/login'

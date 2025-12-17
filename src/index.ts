@@ -38,7 +38,7 @@ export const request = {
   put: <T = any>(url: string, data?: any, config?: any) => checkInit().put<T>(url, data, config),
   delete: <T = any>(url: string, params?: any, config?: any) =>
     checkInit().delete<T>(url, params, config),
-  getQs: <T = any>(url:string, params?: any, config?: any) =>
+  getQs: <T = any>(url: string, params?: any, config?: any) =>
     checkInit().getQs<T>(url, params, config),
   download: (url: string, params?: any, config?: any) => checkInit().download(url, params, config),
   cancelRequest: (url: string) => checkInit().cancelRequest(url),

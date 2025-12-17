@@ -100,8 +100,8 @@ export class SparkyRequest {
           return await handleRetry(error, this.instance)
         } catch (retryError) {
           // 如果重试最终失败，或不满足重试条件，则执行全局错误处理
-          if (this.options.onError) {
-            this.options.onError(retryError as AxiosError)
+          if (this.options.responseFail) {
+            this.options.responseFail(retryError as AxiosError)
           }
           return Promise.reject(retryError)
         }
