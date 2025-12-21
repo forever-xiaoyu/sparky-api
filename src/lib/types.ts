@@ -40,7 +40,7 @@ export interface InitOptions {
   /** 外部注入：请求失败的回调 (用于弹窗提示) */
   onError?: (error: Error | any) => void
   /** 外部注入：Token 或其他 Header 处理钩子 */
-  requestInterceptor?: (
+  requestSuccess?: (
     config: InternalAxiosRequestConfig
   ) => InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>
   /** 外部注入：业务状态码校验 (如 code === 200) */

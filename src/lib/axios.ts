@@ -51,13 +51,19 @@ export class SparkyRequest {
         }
 
         // 3. 执行外部注入的请求前置钩子 (例如注入 Token)
-        if (this.options.requestInterceptor) {
-          return this.options.requestInterceptor(config)
+        if (this.options.requestSuccess) {
+          return this.options.requestSuccess(config)
         }
 
         return config
       },
-      (error) => Promise.reject(error)
+      (error) => {
+        if (this.options.requestFail) {
+          return this.options.requestFail(config)
+        }
+
+        return Promise.reject(error)
+      }
     )
 
     // === 响应拦截 ===

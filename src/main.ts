@@ -9,7 +9,7 @@ initRequest({
   baseUrl: '/api', // 动态传入 baseUrl
 
   // 注入 Token
-  requestInterceptor: async (config: any) => {
+  requestSuccess: async (config: any) => {
     // 【新增】模拟延迟，用于测试 Loading
     if (config._mockDelay) {
       await new Promise((resolve) => setTimeout(resolve, config._mockDelay))
