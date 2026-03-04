@@ -1,8 +1,15 @@
 {
   "name": "@sparkyie/api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "this is a description",
   "main": "dist/sparkyie-api.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/sparkyie-api.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "preview": "vite preview",
