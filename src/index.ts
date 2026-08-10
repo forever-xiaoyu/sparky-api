@@ -1,52 +1,43 @@
-import { SparkyRequest } from './lib/axios'
-import type { InitOptions } from './lib/types'
-import { mountLoading, unmountLoading } from './services/loadingManager'
+import { SparkyRequest } from './core/SparkyRequest'
+import type { InitOptions, RequestConfig } from './core/types'
+import { createDefaultLoadingCallbacks } from './vue/loading'
 
-let requestInstance: SparkyRequest | null = null
+let requestInstance: SparkyRequest | undefined
 
 /**
- * 初始化请求实例 (必须调用)
+ * 创建 `request` 便捷对象使用的默认请求客户端。
+ * 未提供 Loading 回调时，浏览器中会自动使用内置全局 Loading；传入两个回调后则完全交由宿主控制。
  */
-export const initRequest = (options: InitOptions) => {
-  const finalOptions: InitOptions = { ...options }
-
-  // 如果用户没有自定义 onShow/onHideLoading，则使用内置的 Loading 管理器
-  if (!options.onShowLoading && !options.onHideLoading) {
-    finalOptions.onShowLoading = () => mountLoading(options.loadingComponent)
-    finalOptions.onHideLoading = () => unmountLoading()
-  }
-
+export function initRequest(options: InitOptions) {
+  const useCustomLoading = Boolean(options.onShowLoading && options.onHideLoading)
+  const finalOptions = useCustomLoading
+    ? options
+    : { ...options, ...createDefaultLoadingCallbacks(options.loadingComponent) }
   requestInstance = new SparkyRequest(finalOptions)
   return requestInstance
 }
 
-/**
- * 检查是否已初始化
- */
-const checkInit = () => {
-  if (!requestInstance) {
-    throw new Error('[@sparkyie/api] Error: Please call initRequest() first!')
-  }
+function getDefaultClient() {
+  if (!requestInstance) throw new Error('[@sparkyie/api] Call initRequest() before making requests.')
   return requestInstance
 }
 
-// 导出方便调用的静态对象
 export const request = {
-  get: <T = any>(url: string, params?: any, config?: any) =>
-    checkInit().get<T>(url, params, config),
-  post: <T = any>(url: string, data?: any, config?: any) => checkInit().post<T>(url, data, config),
-  put: <T = any>(url: string, data?: any, config?: any) => checkInit().put<T>(url, data, config),
-  delete: <T = any>(url: string, params?: any, config?: any) =>
-    checkInit().delete<T>(url, params, config),
-  getQs: <T = any>(url: string, params?: any, config?: any) =>
-    checkInit().getQs<T>(url, params, config),
-  download: (url: string, params?: any, config?: any) => checkInit().download(url, params, config),
-  cancelRequest: (url: string) => checkInit().cancelRequest(url),
-  cancelAllRequests: () => checkInit().cancelAllRequests()
+  get: <T = unknown>(url: string, params?: unknown, config?: RequestConfig) =>
+    getDefaultClient().get<T>(url, params, config),
+  post: <T = unknown>(url: string, data?: unknown, config?: RequestConfig) =>
+    getDefaultClient().post<T>(url, data, config),
+  put: <T = unknown>(url: string, data?: unknown, config?: RequestConfig) =>
+    getDefaultClient().put<T>(url, data, config),
+  delete: <T = unknown>(url: string, params?: unknown, config?: RequestConfig) =>
+    getDefaultClient().delete<T>(url, params, config),
+  getQs: <T = unknown>(url: string, params?: unknown, config?: RequestConfig) =>
+    getDefaultClient().getQs<T>(url, params, config),
+  download: (url: string, params?: unknown, config?: RequestConfig) =>
+    getDefaultClient().download(url, params, config),
+  cancelRequest: (url: string) => getDefaultClient().cancelRequest(url),
+  cancelAllRequests: () => getDefaultClient().cancelAllRequests()
 }
 
-// 导出类型
-export * from './lib/types'
-
-// 导出类本身 (如果用户想实例化多个请求器)
 export { SparkyRequest }
+export type * from './core/types'

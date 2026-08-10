@@ -1,18 +1,13 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import { initRequest } from './index'
 
-// src/main.ts 或 业务项目的 main.ts
-import { initRequest, request } from './index' // 引入你的包
-
-// 1. 全局初始化配置
 initRequest({
-  baseUrl: '/api', // 动态传入 baseUrl
-
-  // 注入 Token
-  requestSuccess: async (config: any) => {
-    // 【新增】模拟延迟，用于测试 Loading
-    if (config._mockDelay) {
-      await new Promise((resolve) => setTimeout(resolve, config._mockDelay))
+  baseUrl: '/api',
+  requestSuccess: async (config) => {
+    // 仅用于本地示例，确保能观察到默认 Loading；构建库时不会包含此入口。
+    if (import.meta.env.DEV) {
+      await new Promise((resolve) => setTimeout(resolve, 800))
     }
 
     const token = localStorage.getItem('token')
@@ -21,32 +16,11 @@ initRequest({
     }
     return config
   },
-
-  // 注入 UI Loading
-  // onShowLoading: () => {},
-  // onHideLoading: () => {},
-
-  // 注入全局报错
-  responseFail: (err) => {
-    // 可以在这里处理 401 跳转
-    if (err.response?.status === 401) {
-      window.location.href = '/login'
-    }
-  }
+  responseSuccess: (response) => {
+    const code = response.data?.code
+    return code === 0 || code === 200
+  },
+  responseFail: (error) => console.error('Request failed:', error)
 })
-
-// 2. 业务中使用
-async function getUser() {
-  // 支持重试，支持不显示 loading
-  const res = await request.get(
-    '/user/info',
-    { id: 1 },
-    {
-      showLoading: false,
-      retry: { count: 3, delay: 500 }
-    }
-  )
-  console.log(res)
-}
 
 createApp(App).mount('#app')

@@ -4,7 +4,6 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import dts from 'vite-plugin-dts'
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
@@ -21,13 +20,13 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: './src/index.ts', // 入口文件
+      entry: './src/index.ts',
       name: 'sparkyie/api',
       fileName: 'sparkyie-api',
       formats: ['es']
     },
     rollupOptions: {
-      external: ['vue'],
+      external: ['axios', 'vue'],
       output: {
         globals: {
           vue: 'Vue'
@@ -38,9 +37,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://11wa768fa5711.vicp.fun', // 你的真实后端 API 地址
-        changeOrigin: true, // 必须设置为 true，以解决跨域问题
-        rewrite: (path) => path.replace(/^\/api/, '') // 重写路径，去掉 /api 前缀
+        target: 'https://11wa768fa5711.vicp.fun',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   }
